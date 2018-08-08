@@ -3,6 +3,7 @@
   "blockSpecs": [
     ["r", "\u22A5 %m.joysticks %m.axis", "joystick", "L", "X"],
     ["r", "\u22A5-direction %m.joysticks", "angle", "L"],
+    ["r", "Trigger %m.joysticks", "trigger", "L"],
     ["b", "Analog", "analog"],
     ["b", "Button %m.buttons", "button", "\u25B2"],
     [" ", "Rumble %m.joysticks %n.duration seconds", "rumble", "L", 1],

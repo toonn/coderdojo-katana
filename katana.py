@@ -40,9 +40,11 @@ buttonMap = { 'KEY_E'          : 'button/\u25B2'
             , 'BTN_WEST'       : 'button/\u25A1'
             , 'BTN_TL'         : 'button/L1'
             , 'BTN_TL2'        : 'button/L2'
+            , 'ABS_Z'          : 'trigger/L'
             , 'BTN_THUMBL'     : 'button/L3'
             , 'BTN_TR'         : 'button/R1'
             , 'BTN_TR2'        : 'button/R2'
+            , 'ABS_RZ'         : 'trigger/R'
             , 'BTN_THUMBR'     : 'button/R3'
             , 'ABS_X'          : 'joystick/L/X'
             , 'ABS_Y'          : 'joystick/L/Y'
@@ -97,14 +99,18 @@ def kathread():
                 poll_values[buttonMap[e.code]] = ['false', 'true', 'true'
                                                  ][ e.state]
             elif e.ev_type == 'Absolute':
-                if 'Y' in e.code:
-                    e.state = 128 - e.state
+                if 'Z' in e.code:
+                    poll_values[buttonMap[e.code]] = round(100 * (e.state /
+                        255))
                 else:
-                    e.state = e.state - 127
-                poll_values[buttonMap[e.code]] = deadzone(buttonMap[e.code],
-                    e.state)
-                poll_values['angle/'+joystick(buttonMap[e.code])] = compass(
-                    buttonMap[e.code])
+                    if 'Y' in e.code:
+                        e.state = 128 - e.state
+                    elif 'X' in e.code:
+                        e.state = e.state - 127
+                    poll_values[buttonMap[e.code]] = deadzone(buttonMap[e.code],
+                        e.state)
+                    poll_values['angle/'+joystick(buttonMap[e.code])] = compass(
+                        buttonMap[e.code])
 
 class KatanaHandler(BaseHTTPRequestHandler):
     
