@@ -6,7 +6,9 @@
     ["r", "Trigger %m.joysticks", "trigger", "L"],
     ["b", "Analog", "analog"],
     ["b", "Button %m.buttons", "button", "\u25B2"],
-    [" ", "Rumble %m.joysticks %n.duration seconds", "rumble", "L", 1],
+    [" ", "Rumble %m.joysticks %n.intensity % %n.duration seconds", "rumble", "L", 100, 1],
+    ["w", "Rumble & Wait %m.joysticks %n.intensity % %n.duration seconds", "rumblewait", "L", 100, 1],
+    [" ", "Stop Rumbling %m.joysticks", "stoprumble", "L"],
   ],
   "menus": {
     "joysticks": ["L", "R"],

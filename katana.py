@@ -1,8 +1,12 @@
 #! /usr/bin/env python3
 from inputs import get_gamepad
 from http.server import HTTPServer, BaseHTTPRequestHandler
-from threading import Thread
+from threading import Thread, Timer
 from math import atan2, degrees, hypot, copysign
+from os import name as osname
+from time import sleep
+
+WINDOWS = osname == 'nt'
 
 poll_values = { 'joystick/L/X' : 0
               , 'joystick/L/Y' : 0
@@ -10,7 +14,11 @@ poll_values = { 'joystick/L/X' : 0
               , 'joystick/R/Y' : 0
               , 'angle/L' : 90
               , 'angle/R' : 90
+              , '_busy' : []
               }
+
+rumble_threads = {'L': None, 'R': None}
+rumble_values = [0, 0]
 
 buttonMap = { 'KEY_E'          : 'button/\u25B2'
             , 'KEY_D'          : 'button/\u25BC'
@@ -112,15 +120,54 @@ def kathread():
                     poll_values['angle/'+joystick(buttonMap[e.code])] = compass(
                         buttonMap[e.code])
 
+class Rumble(Timer):
+    """Rumble for the provided time and intensity, can be cancelled.
+
+            t = Rumble(intensity, secs)
+            t.start()
+            t.cancel()
+    """
+
+    def __init__(self, left=True, intensity=1, secs=1, f=None, args=()):
+        global rumble_values
+        self.gp = inputs.devices.gamepads[0]
+        self.left = left
+        if self.left:
+            rumble_values[0] = intensity
+        else:
+            rumble_values[1] = intensity
+
+        def stop_f():
+            if f is not None:
+                f(*args)
+            self.stop_rumble()
+
+        super().__init__(interval=secs, f=stop_f)
+
+    def stop_rumble(self):
+        global rumble_values
+        if self.left:
+            rumble_values[0] = 0
+        else:
+            rumble_values[1] = 0
+        self.gp.set_vibration(rumble_values[0], rumble_values[1])
+
+    def run(self):
+        global rumble_values
+        self.gp.set_vibration(rumble_values[0], rumble_values[1])
+        super().run()
+
 class KatanaHandler(BaseHTTPRequestHandler):
     
     def format_response(self, values=[]):
-        response = ["{s} {v}".format(s=sensor, v=value) for (sensor,
+        response = ["{s} {v}".format(s=sensor, v=value if not isinstance(value,
+            list) else ' '.join(value)) for (sensor,
                     value) in values]
         return "\n".join(response)
 
     def do_GET(self):
         global poll_values
+        global rumble_threads
         print(poll_values)
         self.send_response(200)
         self.send_header('Content-type', 'text/html')
@@ -130,13 +177,38 @@ class KatanaHandler(BaseHTTPRequestHandler):
                              poll=self.format_response(poll_values.items())
                              ).encode('utf-8'))
         elif self.path == '/reset_all':
-            pass
-        elif self.path.startswith('/rumble/'):
-            self.wfile.write(("<html><body>_problem Path <b>{path}</b>"
-                              " requested but rumble not implemented."
-                              "</body></html>"
-                             ).format(path=self.path).encode('utf-8'))
-            pass # rumble for int(self.path[8:]) seconds
+            for t in rumble_threads.values():
+                t.stop_rumble()
+                t.cancel()
+            poll_values['_busy'] = []
+        elif self.path.startswith('/stoprumble/'):
+            p = self.path.split('/')
+            t = rumble_threads[p[-1]]
+            t.stop_rumble()
+            t.cancel()
+        elif self.path.startswith('/rumble'):
+            p = self.path.split('/')
+            stick = p[-3]
+            intensity = p[-2]
+            secs = p[-1]
+            if p[1] == 'rumblewait':
+                uid = p[-4]
+                poll_values['_busy'].append(uid)
+                def f():
+                    poll_values['_busy'].remove(uid)
+                Timer(secs=int(secs), f=f)
+            if WINDOWS:
+                if rumble_threads[stick] is not None:
+                    rumble_threads[stick].cancel()
+                rumble_threads[stick] = Rumble(left=stick == 'L',
+                                               intensity=int(intensity)/100.0,
+                                               secs=int(secs))
+                rumble_threads[stick].start()
+            else:
+                self.wfile.write(("<html><body>_problem Path <b>{path}</b>"
+                                  " requested but rumble not implemented."
+                                  "</body></html>"
+                                 ).format(path=self.path).encode('utf-8'))
         elif self.path == '/crossdomain.xml':
             self.wfile.write(('<cross-domain-policy>'
                               '<allow-access-from domain=="*"'
