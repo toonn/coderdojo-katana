@@ -1,24 +1,26 @@
 { "extensionName": "Katana",
   "extensionPort": 31337,
   "blockSpecs": [
-    ["r", "\u22A5 %m.joysticks %m.axis", "joystick", "L", "X"],
-    ["r", "\u22A5-direction %m.joysticks", "angle", "L"],
+    ["r", "Joystick %m.joysticks %m.axis", "joystick", "L", "X"],
+    ["r", "Joystick-direction %m.joysticks", "angle", "L"],
     ["r", "Trigger %m.joysticks", "trigger", "L"],
     ["b", "Analog", "analog"],
-    ["b", "Button %m.buttons", "button", "\u25B2"],
+    ["b", "Button %m.buttons", "button", "up"],
     [" ", "Rumble %m.joysticks %n.intensity % %n.duration seconds", "rumble", "L", 100, 1],
     ["w", "Rumble & Wait %m.joysticks %n.intensity % %n.duration seconds", "rumblewait", "L", 100, 1],
     [" ", "Stop Rumbling %m.joysticks", "stoprumble", "L"],
   ],
   "menus": {
     "joysticks": ["L", "R"],
-    "buttons": ["\u25B2", "\u25BC", "\u25C0", "\u25B6",
-                "\u2A2F", "\u25CB", "\u25B3", "\u25A1",
+    "buttons": ["up", "down", "left", "right",
+                "x", "o", "triangle", "square",
                 "L1", "L2", "L3", "R1", "R2", "R3",
-                "\u25AC", "\u25BA"],
+                "select", "start"],
     "axis": ["X", "Y"],
-    "buttonsComment": ["up", "down", "left", "right", "x", "o", "triangle",
-      "square", "L1", "L2", "L3", "R1", "R2", "R3", "select", "start" ],
+    "buttonsComment": ["up", "down", "left", "right",
+                       "x", "o", "triangle", "square",
+                       "L1", "L2", "L3", "R1", "R2", "R3",
+                       "select", "start" ],
   },
 }
 
@@ -26,5 +28,3 @@
 # poll response can be _problem Scratch couldn't find your gamepad.
 # Helper can be written in any language that supports server sockets: python,
 # java, haskell(windows?).
-#"buttons": ["", "", "", "", "", "", "", "", "", "", "", "",
-#  "", "", "", ""],
