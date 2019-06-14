@@ -1,5 +1,8 @@
-# coderdojo-katana
-Scratch 2.0 extension to interface with gamepads
+Katana
+======
+[In het Nederlands](README.nl.md)
+
+Katana is a Scratch 2.0 extension to interface with gamepads
 
 The Scratch 2.0 extension API has always remained experimental so getting
 extensions loaded requires a trick.
@@ -23,8 +26,8 @@ it's connected.
 Katana currently only supports connecting a single controller to scratch.
 
 There's an older similar project with more polish available at the [Coolest
-Projects](http://coolestprojects.be/controller/) website. Be sure to check it
-out because they have some great advice.
+Projects](http://coolestprojects.be/controller/) website (in dutch). Be sure to
+check it out because they have some great advice.
 
 Is there any point to this project existing if there's an alternative?
 I can come up with three reasons:
