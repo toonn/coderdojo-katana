@@ -1,0 +1,30 @@
+{ "extensionName": "Katana",
+  "extensionPort": 31337,
+  "blockSpecs": [
+    ["r", "Joystick %m.joysticks %m.axis", "joystick", "L", "X"],
+    ["r", "Joystick-hoek %m.joysticks", "angle", "L"],
+    ["r", "Trigger %m.joysticks", "trigger", "L"],
+    ["b", "Analog", "analog"],
+    ["b", "Knop %m.buttons", "button", "omhoog"],
+    [" ", "Tril %m.joysticks %n.intensity % %n.duration seconden", "rumble", "L", 100, 1],
+    ["w", "Tril & Wacht %m.joysticks %n.intensity % %n.duration seconden", "rumble", "L", 100, 1],
+    [" ", "Stop trillen %m.joysticks", "stoprumble", "L"],
+  ],
+  "menus": {
+    "joysticks": ["L", "R"],
+    "buttons": ["omhoog", "omlaag", "links", "rechts",
+                "x", "o", "driehoek", "vierkant",
+                "L1", "L2", "L3", "R1", "R2", "R3",
+                "select", "start"],
+    "axis": ["X", "Y"],
+    "buttonsComment": ["omhoog", "omlaag", "links", "rechts",
+                       "x", "o", "driehoek", "vierkant",
+                       "L1", "L2", "L3", "R1", "R2", "R3",
+                       "select", "start" ],
+  },
+}
+
+# Helper app needs to implement /poll, /reset_all, /rumble/duration
+# poll response can be _problem Scratch couldn't find your gamepad.
+# Helper can be written in any language that supports server sockets: python,
+# java, haskell(windows?).
